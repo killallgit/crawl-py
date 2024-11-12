@@ -10,6 +10,30 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+from pathlib import Path
+from typing import List, Sequence, Union
+
+def merge_directory_paths(directories: Sequence[Union[str, Path]]) -> List[Path]:
+    supported_extensions=['.wav', '.mp3', '.flac', '.ogg', '.m4a']
+    merged_paths = []
+    
+    for directory in directories:
+        # Convert to Path object if not already
+        dir_path = Path(directory)
+        
+        # Check if directory exists
+        if not dir_path.is_dir():
+            raise ValueError(f"Path {dir_path} is not a valid directory")
+        
+        # Recursively get all files and subdirectories
+        merged_paths.extend(list(dir_path.rglob('*')))
+    
+    # Remove duplicates and sort (optional)
+    merged_paths = sorted(set(merged_paths))
+    # remove non audio files
+    merged_paths = [p for p in merged_paths if p.suffix.lower() in supported_extensions]
+    return merged_paths
+
 def convert_audio_to_wav(input_path, output_path, target_sample_rate=16000, channels=1):
     """
     Convert audio file to mono 16kHz WAV using ffmpeg with more robust error handling
@@ -59,27 +83,19 @@ def calculate_shasum(file_path):
         return None
 
 def sanitize_filename(filename):
-    """
-    Sanitize filename by removing special characters and replacing with underscores
-    """
-    # Remove or replace characters that might cause issues in filenames
-    sanitized = re.sub(r'[^\w\-_\.]', '_', filename)
+    if filename.count('_') <= 3:
+        # Split on the last underscore
+        match = re.match(r'^(.+)_([^_]+)$', filename)
+        if match:
+            return match.group(1), match.group(2)
     
-    # Ensure filename is not empty
-    return sanitized if sanitized else "unnamed_file"
+    # If more than 3 underscores or no match, return the original filename
+    return filename, ''
 
-def process_audio_files(input_dir, output_data_dir, metadata_path, 
-                        supported_extensions=['.wav', '.mp3', '.flac', '.ogg', '.m4a']):
-    """
-    Process audio files in a directory, with advanced metadata tracking
-    
-    :param input_dir: Directory containing source audio files
-    :param output_data_dir: Directory to save converted WAV files
-    :param metadata_path: Path to metadata JSONL file
-    :param supported_extensions: List of supported audio file extensions
-    """
+def process_audio_files(raw_audio_paths, root_dataset_dir):
+    dataset_data_dir = os.path.join(root_dataset_dir, 'data')
     # Create output directories if they don't exist
-    os.makedirs(output_data_dir, exist_ok=True)
+    os.makedirs(dataset_data_dir, exist_ok=True)
     
     # Load existing metadata
     metadata = []
@@ -90,23 +106,14 @@ def process_audio_files(input_dir, output_data_dir, metadata_path,
     except Exception as e:
         logger.warning(f"Error reading existing metadata: {str(e)}")
     
-    # Find audio files
-    audio_files = [
-        f for f in os.listdir(input_dir) 
-        if os.path.isfile(os.path.join(input_dir, f)) 
-        and os.path.splitext(f)[1].lower() in supported_extensions
-    ]
-    
     # Process files with progress bar
-    for audio_file in tqdm(audio_files, desc="Processing Audio Files"):
+    for input_path in tqdm(raw_audio_paths, desc="Processing Audio Files"):
         try:
             # Input and output paths
-            input_path = os.path.join(input_dir, audio_file)
-            
             # Generate a unique, safe filename
-            file_name, file_ext = os.path.splitext(audio_file)
-            safe_id = sanitize_filename(file_name)
-            output_path = os.path.join(output_data_dir, f"{safe_id}.wav")
+            file_name, file_ext = input_path.name, input_path.suffix
+            safe_id, original_title = sanitize_filename(file_name)
+            output_path = os.path.join(root_dataset_dir, f"{safe_id}.wav")
             
             # Check if file already processed with matching hash
             existing_entry = next(
@@ -118,12 +125,12 @@ def process_audio_files(input_dir, output_data_dir, metadata_path,
             # Calculate current input file hash
             current_hash = calculate_shasum(input_path)
             if not current_hash:
-                logger.warning(f"Skipping {audio_file}: Could not calculate hash")
+                logger.warning(f"Skipping {input_path}: Could not calculate hash")
                 continue
             
             # Skip if already processed with same hash
             if existing_entry and existing_entry.get('shasum') == current_hash:
-                logger.info(f"Skipping {audio_file}: Already processed")
+                logger.info(f"Skipping {input_path}: Already processed")
                 continue
             
             # Convert audio
@@ -135,7 +142,7 @@ def process_audio_files(input_dir, output_data_dir, metadata_path,
                 entry = {
                     'file_name': f"data/{safe_id}.wav",
                     'shasum': file_shasum,
-                    'original_filename': audio_file,
+                    'original_filename': original_title,
                     'transcription': ''  # Placeholder for transcription
                 }
                 
@@ -148,24 +155,28 @@ def process_audio_files(input_dir, output_data_dir, metadata_path,
                 # Add new entry
                 metadata.append(entry)
                 
+                # remove original file
+                os.remove(input_path)
+
                 # Write updated metadata
                 with open(metadata_path, 'w', encoding='utf-8') as f:
                     for item in metadata:
                         f.write(json.dumps(item) + '\n')
                 
-                logger.info(f"Processed: {audio_file}")
+                logger.info(f"Processed: {input_path}")
             else:
-                logger.warning(f"Failed to convert: {audio_file}")
+                logger.warning(f"Failed to convert: {input_path}")
         
         except Exception as e:
-            logger.error(f"Error processing {audio_file}: {str(e)}")
+            logger.error(f"Error processing {input_path}: {str(e)}")
     
     logger.info("Audio processing complete")
 
 # Usage example
 if __name__ == "__main__":
-    input_dir = 'crawled-audio/audio'
-    output_data_dir = 'commercial_dataset/data'
-    metadata_path = 'commercial_dataset/metadata.jsonl'
+    raw_audio_dirs = ['tmp/downloaded/crawled-audio/audio', 'tmp/downloaded/raw-audio/audio']
+    combined_raw_dirs = merge_directory_paths(raw_audio_dirs)  
+    root_dataset_dir = 'tmp/commercial_dataset/data'
+    metadata_path = 'tmp/commercial_dataset/metadata.jsonl'
 
-    process_audio_files(input_dir, output_data_dir, metadata_path)
+    process_audio_files(combined_raw_dirs, root_dataset_dir)
