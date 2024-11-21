@@ -2,16 +2,15 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.0/.schema/devbox.schema.json",
   "packages": [
     "sqlite@latest",
-    "python@3.11",
-    "python311Packages.pip@latest"
+    "python312@latest"
   ],
   "env": {
     "VENV_DIR": ".venv",
-    "PYTHONPATH": "."
+    "PYTHONPATH": "./app"
   },
   "shell": {
     "init_hook": [
-      "source .venv/bin/activate"
+      ". .venv/bin/activate"
     ],
     "scripts": {
       "test": [
