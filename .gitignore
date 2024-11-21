@@ -170,3 +170,4 @@ ___*
 logs
 .devbox
 .venv
+.DS_Store
