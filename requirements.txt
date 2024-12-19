@@ -5,4 +5,5 @@ datasets
 huggingface_hub 
 datasets 
 python-dotenv 
-openai-whisper 
+openai-whisper
+sphinx

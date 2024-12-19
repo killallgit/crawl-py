@@ -1,6 +1,71 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "poetry@latest": {
+      "last_modified": "2024-12-09T13:13:08Z",
+      "plugin_version": "0.0.4",
+      "resolved": "github:NixOS/nixpkgs/bc27f0fde01ce4e1bfec1ab122d72b7380278e68#poetry",
+      "source": "devbox-search",
+      "version": "1.8.5",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8cwmha2b6lkv02d7swzd8li2i4vcxin1-python3.12-poetry-1.8.5",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/52jmqs0q5ss1bffgf5fk1dnsx798fbjz-python3.12-poetry-1.8.5-dist"
+            }
+          ],
+          "store_path": "/nix/store/8cwmha2b6lkv02d7swzd8li2i4vcxin1-python3.12-poetry-1.8.5"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/wx3jazi6i8qd58xqr3j456wiwdbipccw-python3.12-poetry-1.8.5",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/hllvb6b6yjq7gfhgm8vzzy9c78llx1vm-python3.12-poetry-1.8.5-dist"
+            }
+          ],
+          "store_path": "/nix/store/wx3jazi6i8qd58xqr3j456wiwdbipccw-python3.12-poetry-1.8.5"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/a2smdsksgxrfsgjzhry33mjr0m7npjp9-python3.12-poetry-1.8.5",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/84q1khxfmrgjzk9rxf5bi3v7gzbpha0s-python3.12-poetry-1.8.5-dist"
+            }
+          ],
+          "store_path": "/nix/store/a2smdsksgxrfsgjzhry33mjr0m7npjp9-python3.12-poetry-1.8.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xz0kzxknf7zl91kqqfi0p11dlq68cwbd-python3.12-poetry-1.8.5",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/z0r17yg5kh1236ynvwl8rngkx9bbzsmk-python3.12-poetry-1.8.5-dist"
+            }
+          ],
+          "store_path": "/nix/store/xz0kzxknf7zl91kqqfi0p11dlq68cwbd-python3.12-poetry-1.8.5"
+        }
+      }
+    },
     "python312@latest": {
       "last_modified": "2024-06-12T20:55:33Z",
       "plugin_version": "0.0.4",
@@ -143,6 +208,54 @@
             }
           ],
           "store_path": "/nix/store/6r58kzdhs5jlynkkndg1plia4bvvkadv-sqlite-3.46.0-bin"
+        }
+      }
+    },
+    "yarn@latest": {
+      "last_modified": "2024-11-28T07:51:56Z",
+      "resolved": "github:NixOS/nixpkgs/226216574ada4c3ecefcbbec41f39ce4655f78ef#yarn",
+      "source": "devbox-search",
+      "version": "1.22.22",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0hmmpszg5wfrr43kvlk2cxjqpll0dh2z-yarn-1.22.22",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/0hmmpszg5wfrr43kvlk2cxjqpll0dh2z-yarn-1.22.22"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vmx0di4y3m8amqwsfgyccf8zs8kml06q-yarn-1.22.22",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vmx0di4y3m8amqwsfgyccf8zs8kml06q-yarn-1.22.22"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nbaa0rip3xw6l3bmnc2k2fm071pzvzwv-yarn-1.22.22",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nbaa0rip3xw6l3bmnc2k2fm071pzvzwv-yarn-1.22.22"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jcgdksj946l5l42c2y9ks2l4g6n74h3f-yarn-1.22.22",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jcgdksj946l5l42c2y9ks2l4g6n74h3f-yarn-1.22.22"
         }
       }
     }

@@ -2,10 +2,12 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.0/.schema/devbox.schema.json",
   "packages": [
     "sqlite@latest",
-    "python312@latest"
+    "python312@latest",
+    "yarn@latest",
+    "poetry@latest"
   ],
   "env": {
-    "VENV_DIR": ".venv",
+    "VENV_DIR":   ".venv",
     "PYTHONPATH": "./app"
   },
   "shell": {
