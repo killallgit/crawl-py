@@ -1,9 +1,7 @@
-pytube 
-moviepy 
 yt-dlp
 datasets
 huggingface_hub 
-datasets 
 python-dotenv 
 openai-whisper
-sphinx
+tqdm
+pydantic

@@ -171,3 +171,4 @@ logs
 .devbox
 .venv
 .DS_Store
+crawled
